@@ -4,11 +4,16 @@ import KPopover from "app/components/partials/popover/popover";
 import styles from "./index.module.css";
 import { mergeProps } from "@base-ui/react";
 
-interface EditCellProps extends React.HTMLProps<HTMLElement> { }
+interface EditCellProps extends React.HTMLProps<HTMLElement> {
+  onChange: (type: "impulse" | "response", index: number, value: boolean) => void;
+  index: number;
+  type: "impulse" | "response";
+}
 
-export default function EditCell({ className }: EditCellProps) {
-  const [cellState, setCellState] = React.useState(0);
+export default function EditCell({ className, onChange, type, index }: EditCellProps) {
+  const [cellState, setCellState] = React.useState(null);
   function onCellStateSelected(value: any) {
+    onChange(type, index, value);
     setCellState(value);
   }
 
@@ -19,21 +24,21 @@ export default function EditCell({ className }: EditCellProps) {
         <div
           style={
             {
-              "--color": `var(--cell-state-${cellState})`,
+              "--color": `var(--cell-state-${String(cellState)})`,
             } as React.CSSProperties
           }
           {...mergeProps({ className: styles.Cell }, { className: className })}
         >
-          {cellState == 0 && <span>Unaffected</span>}
+          {cellState === null && <span>Unaffected</span>}
         </div>
       }
     >
       <KSelect
-        root={{ onValueChange: onCellStateSelected, defaultValue: "0" }}
+        root={{ onValueChange: onCellStateSelected, defaultValue: "null" }}
         values={[
-          { label: "0", value: 0 },
-          { label: "1", value: 1 },
-          { label: "2", value: 2 },
+          { label: "null", value: null },
+          { label: "false", value: false },
+          { label: "true", value: true },
         ]}
       />
     </KPopover>

@@ -1,7 +1,7 @@
 :root {
-  --cell-state-0: rgb(127 127 127);
-  --cell-state-1: rgb(0 0 0);
-  --cell-state-2: rgb(255 255 255);
+  --cell-state-null: rgb(127 127 127);
+  --cell-state-false: rgb(0 0 0);
+  --cell-state-true: rgb(255 255 255);
 
   --color-blue: oklch(45% 50% 264deg);
   --color-red: oklch(50% 55% 31deg);

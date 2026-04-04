@@ -1,57 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import styles from "./index.module.css";
 import Grid from "~/data-structures/grid";
 import { SpatialRule, type Rule } from "~/data-structures/rule";
+import { RuleContext } from "~/contexts/rule-context";
 
-// Falling sand game
-// const rules: Rule[] = [
-//   new SpatialRule(
-//     [null, null, null, null, true, null, null, false, null],
-//     [null, null, null, null, false, null, null, true, null],
-//   ),
-//   new SpatialRule(
-//     [null, null, null, null, true, null, false, true, null],
-//     [null, null, null, null, false, null, true, null, null],
-//   ),
-//   new SpatialRule(
-//     [null, null, null, null, true, null, null, true, false],
-//     [null, null, null, null, false, null, null, null, true],
-//   ),
-// ]
 
-// Free epilepsy
-// const rules: Rule[] = [
-//   new SpatialRule(
-//     [null, false, null, false, false, false, null, false, null],
-//     [null, null, null, null, true, null, null, null, null],
-//   ),
-//   new SpatialRule(
-//     [null, true, null, true, true, true, null, true, null],
-//     [null, null, null, null, false, null, null, null, null],
-//   ),
-// ]
-
-// Pyramid (draw in top left a bit)
-const rules: Rule[] = [
-  new SpatialRule(
-    [null, null, null, null, false, true, null, true, null],
-    [null, null, null, null, true, null, false, false, false],
-  ),
-]
-
-// Pyramid (top-left too) (draw in top left a bit)
-// const rules: Rule[] = [
-//   new SpatialRule(
-//     [null, null, null, null, false, true, null, true, null],
-//     [null, null, null, null, true, null, false, false, false],
-//   ),
-//   new SpatialRule(
-//     [null, true, null, true, false, null, null, null, null],
-//     [false, false, null, null, true, null, null, null, null],
-//   ),
-// ]
+interface CellularGridProps {
+  rules: Rule[];
+}
 
 export default function CellularGrid() {
+  const { rules } = useContext(RuleContext)
+  console.log(rules);
   const grid = useRef(new Grid(100, 100))
   const [gridRerender, setGridRerender] = useState(false)
 
@@ -155,11 +115,6 @@ export default function CellularGrid() {
   }
   function onClick(e: React.MouseEvent<HTMLCanvasElement>) {
     const { x, y } = getMousePosition(e.target as HTMLCanvasElement, e);
-    console.log(x, y);
-    console.log(
-      Math.round(x * grid.current.width),
-      Math.round(y * grid.current.height),
-    )
     grid.current.setCell(
       Math.round(x * grid.current.width),
       Math.round(y * grid.current.height),
@@ -180,7 +135,6 @@ export default function CellularGrid() {
         style={{ border: "1px solid #d3d3d3" }}
         onMouseMove={onClick}
       >
-        Your browser does not support the HTML canvas tag.
       </canvas>
     </div>
   );
