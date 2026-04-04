@@ -11,7 +11,6 @@ interface CellularGridProps {
 
 export default function CellularGrid() {
   const { rules } = useContext(RuleContext)
-  console.log(rules);
   const grid = useRef(new Grid(100, 100))
   const [gridRerender, setGridRerender] = useState(false)
 

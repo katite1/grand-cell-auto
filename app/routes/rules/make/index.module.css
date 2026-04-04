@@ -2,3 +2,9 @@
   display: flex;
   gap: 2rem;
 }
+
+.Rules {
+  gap: 2rem;
+  display: flex;
+  flex-direction: column;
+}

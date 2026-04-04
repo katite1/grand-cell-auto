@@ -5,15 +5,13 @@ import styles from "./index.module.css";
 import { mergeProps } from "@base-ui/react";
 
 interface EditCellProps extends React.HTMLProps<HTMLElement> {
-  onChange: (type: "impulse" | "response", index: number, value: boolean) => void;
-  index: number;
-  type: "impulse" | "response";
+  onChange: (value: boolean) => void;
 }
 
-export default function EditCell({ className, onChange, type, index }: EditCellProps) {
+export default function EditCell({ className, onChange, }: EditCellProps) {
   const [cellState, setCellState] = React.useState(null);
   function onCellStateSelected(value: any) {
-    onChange(type, index, value);
+    onChange(value);
     setCellState(value);
   }
 
@@ -29,7 +27,7 @@ export default function EditCell({ className, onChange, type, index }: EditCellP
           }
           {...mergeProps({ className: styles.Cell }, { className: className })}
         >
-          {cellState === null && <span>Unaffected</span>}
+          {cellState === null && <span>Ignored</span>}
         </div>
       }
     >

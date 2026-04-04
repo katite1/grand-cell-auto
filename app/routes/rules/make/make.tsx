@@ -5,6 +5,7 @@ import CellularGrid from "~/components/cellular-grid/cellular-grid";
 import { Rule, SpatialRule } from "~/data-structures/rule";
 import { useContext, createContext, useState } from "react";
 import { RuleContext } from "~/contexts/rule-context";
+import EditRule from "~/components/rules/edit-rule/edit-rule";
 
 export function meta({ }: Route.MetaArgs) {
   return [{ title: "Make ruleset" }];
@@ -60,11 +61,20 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Make() {
   const [rules, setRules] = useState<Rule[]>([]);
+  console.log(rules);
+  function newRule() {
+    setRules((rules) => {
+      return [...rules, new SpatialRule()]
+    })
+  }
   return (
     <RuleContext value={{ rules: rules, setRules: setRules }}>
       <section className={styles.Make}>
         <div className={styles.Rules}>
-          <ListRules />
+          {rules.map((_, index) => {
+            return <EditRule ruleIndex={index} key={index} />
+          })}
+          <button onClick={newRule}>Add rule</button>
         </div>
         <CellularGrid />
       </section>
