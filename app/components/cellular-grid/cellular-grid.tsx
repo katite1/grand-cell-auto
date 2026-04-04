@@ -1,18 +1,58 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./index.module.css";
-import { ruleConditionVectors, type rule } from "../rules/rule";
 import Grid from "~/data-structures/grid";
+import { SpatialRule, type Rule } from "~/data-structures/rule";
 
-const rules: rule[] = [
-  { before: false, after: true, conditions: [false, false, false, false, false, null, true, null] },
-  { before: true, after: false, conditions: [true, true, true, true, true, true, true, true] }
+// Falling sand game
+// const rules: Rule[] = [
+//   new SpatialRule(
+//     [null, null, null, null, true, null, null, false, null],
+//     [null, null, null, null, false, null, null, true, null],
+//   ),
+//   new SpatialRule(
+//     [null, null, null, null, true, null, false, true, null],
+//     [null, null, null, null, false, null, true, null, null],
+//   ),
+//   new SpatialRule(
+//     [null, null, null, null, true, null, null, true, false],
+//     [null, null, null, null, false, null, null, null, true],
+//   ),
+// ]
+
+// Free epilepsy
+// const rules: Rule[] = [
+//   new SpatialRule(
+//     [null, false, null, false, false, false, null, false, null],
+//     [null, null, null, null, true, null, null, null, null],
+//   ),
+//   new SpatialRule(
+//     [null, true, null, true, true, true, null, true, null],
+//     [null, null, null, null, false, null, null, null, null],
+//   ),
+// ]
+
+// Pyramid (draw in top left a bit)
+const rules: Rule[] = [
+  new SpatialRule(
+    [null, null, null, null, false, true, null, true, null],
+    [null, null, null, null, true, null, false, false, false],
+  ),
 ]
-// const rules: rule[] = [
-//   { before: false, after: true, conditions: [null, null, null, null, null, false, true, null] },
+
+// Pyramid (top-left too) (draw in top left a bit)
+// const rules: Rule[] = [
+//   new SpatialRule(
+//     [null, null, null, null, false, true, null, true, null],
+//     [null, null, null, null, true, null, false, false, false],
+//   ),
+//   new SpatialRule(
+//     [null, true, null, true, false, null, null, null, null],
+//     [false, false, null, null, true, null, null, null, null],
+//   ),
 // ]
 
 export default function CellularGrid() {
-  const grid = useRef(new Grid(10, 10))
+  const grid = useRef(new Grid(100, 100))
   const [gridRerender, setGridRerender] = useState(false)
 
   const width = 1000;
@@ -22,27 +62,30 @@ export default function CellularGrid() {
     cell: boolean | null,
     x: number,
     y: number,
-    rule: rule,
+    rule: Rule,
   ): boolean {
-    if (cell !== rule.before) {
-      return false;
-    }
-    let conditionIndex = 0;
-    for (const condition of rule.conditions) {
-      if (condition == null) {
-        conditionIndex++;
-        continue;
-      }
-      const cell = grid.current.getCell(
-        x + ruleConditionVectors[conditionIndex][0],
-        y + ruleConditionVectors[conditionIndex][1],
-      )
-      if (
-        cell !== condition
-      ) {
+    if (rule instanceof SpatialRule) {
+      if (cell !== rule.impulseCenter()) {
         return false;
       }
-      conditionIndex++;
+      let conditionIndex = 0;
+      for (const condition of rule.impulse) {
+        if (condition == null) {
+          conditionIndex++;
+          continue;
+        }
+        const cell = grid.current.getCell(
+          x + rule.vectors[conditionIndex][0],
+          y + rule.vectors[conditionIndex][1],
+        )
+        if (
+          cell !== condition
+        ) {
+          return false;
+        }
+        conditionIndex++;
+      }
+      return true;
     }
     return true;
   }
@@ -52,8 +95,22 @@ export default function CellularGrid() {
     grid.current.forEachCell((cell, x, y) => {
       for (const rule of rules) {
         if (ruleApplies(cell, x, y, rule)) {
-          grid.current.setCell(x, y, rule.after);
-          gridChanged = true;
+          if (rule instanceof SpatialRule) {
+            let conditionIndex = 0;
+            for (const condition of rule.response) {
+              if (condition == null) {
+                conditionIndex++;
+                continue;
+              }
+              grid.current.setCell(
+                x + rule.vectors[conditionIndex][0],
+                y + rule.vectors[conditionIndex][1],
+                condition
+              )
+              gridChanged = true;
+              conditionIndex++;
+            }
+          }
         }
       }
     });
@@ -62,8 +119,6 @@ export default function CellularGrid() {
       setGridRerender((v) => !v);
     }
   }
-  console.log("render grid");
-  console.log(grid.current.content);
   useEffect(() => {
     var c = document.getElementById("myCanvas") as HTMLCanvasElement;
     var ctx = c.getContext("2d");
@@ -84,7 +139,35 @@ export default function CellularGrid() {
       }
     }
     ctx.stroke();
+
+    const stepInterval = setInterval(() => {  //assign interval to a variable to clear it.
+      doStep()
+    }, 10)
+
+    return () => clearInterval(stepInterval); //This is important
   }, [gridRerender]);
+
+  function getMousePosition(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement>) {
+    let rect = canvas.getBoundingClientRect();
+    let x = (event.clientX - rect.left) / rect.width;
+    let y = (event.clientY - rect.top) / rect.height;
+    return { x: x, y: y };
+  }
+  function onClick(e: React.MouseEvent<HTMLCanvasElement>) {
+    const { x, y } = getMousePosition(e.target as HTMLCanvasElement, e);
+    console.log(x, y);
+    console.log(
+      Math.round(x * grid.current.width),
+      Math.round(y * grid.current.height),
+    )
+    grid.current.setCell(
+      Math.round(x * grid.current.width),
+      Math.round(y * grid.current.height),
+      true
+    )
+    grid.current.commit();
+    setGridRerender((v) => !v);
+  }
 
   return (
     <div className={styles.CellularGrid}>
@@ -95,6 +178,7 @@ export default function CellularGrid() {
         width={String(width)}
         height={String(height)}
         style={{ border: "1px solid #d3d3d3" }}
+        onMouseMove={onClick}
       >
         Your browser does not support the HTML canvas tag.
       </canvas>
