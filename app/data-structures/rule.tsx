@@ -3,7 +3,7 @@ export abstract class Rule {
     serialized(): RuleSerialized {
         throw "Serialize method not implemented for rule!";
     }
-    static unserialize(): void {
+    static unserialize(rule: RuleSerialized): Rule {
         throw "Serialize method not implemented for rule!";
     }
 }
