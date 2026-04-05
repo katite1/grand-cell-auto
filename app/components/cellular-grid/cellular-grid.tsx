@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState, type ChangeEvent } from "react";
 import styles from "./index.module.css";
 import Grid from "~/data-structures/grid";
 import { SpatialRule, type Rule } from "~/data-structures/rule";
@@ -10,6 +10,7 @@ export default function CellularGrid() {
   const grid = useRef(new Grid(30, 30))
   const [gridRerender, setGridRerender] = useState(false)
   const [play, setPlay] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(50);
   const mouseDragging = useRef(false);
 
 
@@ -103,11 +104,11 @@ export default function CellularGrid() {
     if (play === true) {
       const stepInterval = setInterval(() => {
         doStep()
-      }, 10)
+      }, playbackSpeed)
 
       return () => clearInterval(stepInterval);
     }
-  }, [play])
+  }, [play, playbackSpeed])
 
   function getMousePosition(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement>) {
     let rect = canvas.getBoundingClientRect();
@@ -139,11 +140,30 @@ export default function CellularGrid() {
     setGridRerender((v) => !v);
   }
 
+  function setProcessOrder(e: ChangeEvent<HTMLSelectElement>) {
+    grid.current.processOrder = e.target.value as "sequential" | "random";
+  }
+  function setProcessMode(e: ChangeEvent<HTMLSelectElement>) {
+    grid.current.processMode = e.target.value as "deferred" | "instant";
+  }
+
   return (
     <div className={styles.CellularGrid}>
       <button onClick={doStep}>doStep</button>
       <button onClick={togglePlay}>Play {play === true ? "on" : "off"}</button>
       <button onClick={clearField}>Clear</button>
+      <input
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setPlaybackSpeed(Number(e.target.value))}
+        type="range" min="10" max="200" value={playbackSpeed}
+      />
+      <select name="processOrder" onChange={setProcessOrder}>
+        <option defaultChecked value="sequential">Sequential</option>
+        <option value="random">Random</option>
+      </select>
+      <select name="processMode" onChange={setProcessMode}>
+        <option defaultChecked value="deferred">Deferred</option>
+        <option value="instant">Instant</option>
+      </select>
       <canvas
         className={styles.Canvas}
         id="myCanvas"
