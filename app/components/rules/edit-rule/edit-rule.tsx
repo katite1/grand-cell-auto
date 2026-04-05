@@ -10,7 +10,7 @@ interface EditRuleProps {
 
 export default function EditRule({ ruleIndex }: EditRuleProps) {
   const { rules, setRules } = useContext(RuleContext)
-  function onChange(ruleIndex: number, type: "impulse" | "response", index: number, value: number) {
+  function onChange(ruleIndex: number, type: "impulse" | "response", index: number, value: number | null) {
     setRules((rules) => {
       rules = [...rules];
       if (rules[ruleIndex] instanceof SpatialRule) {
@@ -20,7 +20,7 @@ export default function EditRule({ ruleIndex }: EditRuleProps) {
     })
   }
 
-  function onCellEdit(index: number, type: "impulse" | "response", ...args: [number]) {
+  function onCellEdit(index: number, type: "impulse" | "response", ...args: [number | null]) {
     onChange(ruleIndex, type, index, ...args)
   }
   const rule = rules[ruleIndex] as unknown as SpatialRule;

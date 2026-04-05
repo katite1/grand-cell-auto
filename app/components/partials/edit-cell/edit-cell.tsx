@@ -6,18 +6,19 @@ import KCheckboxGroup from "../checkbox-group/checkbox-group";
 
 interface EditCellProps {
   className: string;
-  onChange: (value: number) => void;
+  onChange: (value: number | null) => void;
   cellValue: number | null;
 }
 
 export default function EditCell({ className, onChange, cellValue }: EditCellProps) {
   function onCellStateSelected(value: string[] | null[]) {
+    // We get index 0 of value since it's a radio checkbox, for now we just take the first checked item and ignore multiselects
     if (value.length === 0) {
       value = [null];
     }
-    onChange(Number(value[0]));
+    const selection = typeof value[0] === "string" ? Number(value[0]) : value[0];
+    onChange(selection);
   }
-
   return (
     <KPopover
       label="Edit cell"
@@ -35,8 +36,8 @@ export default function EditCell({ className, onChange, cellValue }: EditCellPro
       }
     >
       <KCheckboxGroup items={[
-        { label: "false", value: "0" },
-        { label: "true", value: "1" },
+        { label: "black", value: "0" },
+        { label: "white", value: "1" },
       ]} caption={"Cell value"} onChange={onCellStateSelected}></KCheckboxGroup>
     </KPopover>
   );

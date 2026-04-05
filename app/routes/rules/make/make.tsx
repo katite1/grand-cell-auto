@@ -61,7 +61,6 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Make() {
   const [rules, setRules] = useState<Rule[]>([]);
-  console.log(rules);
 
   function newRule(): void {
     setRules((rules) => {
@@ -92,12 +91,10 @@ export default function Make() {
             if (rule.type === "spatial") {
               return SpatialRule.unserialize(rule as SpatialRuleSerialized);
             }
-            console.log(typeof rule);
             throw "Rule type is invalid!!";
           })
           setRules(newRules);
         } catch (error) {
-          console.log(error);
           e.target.value = "";
           return;
         }
