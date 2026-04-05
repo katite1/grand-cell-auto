@@ -52,8 +52,8 @@
   color: var(--color-gray-900);
   transform-origin: var(--transform-origin);
   transition:
-    transform 150ms,
-    opacity 150ms;
+    transform 50ms,
+    opacity 50ms;
 
   width: var(--popup-width, auto);
   height: var(--popup-height, auto);

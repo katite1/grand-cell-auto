@@ -2,15 +2,15 @@ export abstract class Rule { }
 
 type spatialRuleCondition =
     [
-        boolean | null,
-        boolean | null,
-        boolean | null,
-        boolean | null,
-        boolean,
-        boolean | null,
-        boolean | null,
-        boolean | null,
-        boolean | null,
+        number | null,
+        number | null,
+        number | null,
+        number | null,
+        number,
+        number | null,
+        number | null,
+        number | null,
+        number | null,
     ]
 
 export class SpatialRule extends Rule {
@@ -19,8 +19,8 @@ export class SpatialRule extends Rule {
     vectors: [number, number][] = [];
     constructor(impulse?: spatialRuleCondition, response?: spatialRuleCondition) {
         super();
-        this.impulse = impulse ? impulse : [null, null, null, null, false, null, null, null, null];
-        this.response = response ? response : [null, null, null, null, false, null, null, null, null];
+        this.impulse = impulse ? impulse : [null, null, null, null, 0, null, null, null, null];
+        this.response = response ? response : [null, null, null, null, 0, null, null, null, null];
         this.vectors = [
             [-1, -1],
             [0, -1],
@@ -33,10 +33,10 @@ export class SpatialRule extends Rule {
             [1, 1],
         ];
     }
-    impulseCenter(): boolean {
+    impulseCenter(): number {
         return this.impulse[4];
     }
-    responseCenter(): boolean {
+    responseCenter(): number {
         return this.response[4];
     }
 }

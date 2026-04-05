@@ -1,18 +1,20 @@
 import * as React from "react";
-import KSelect from "app/components/partials/select/select";
 import KPopover from "app/components/partials/popover/popover";
 import styles from "./index.module.css";
 import { mergeProps } from "@base-ui/react";
+import KCheckboxGroup from "../checkbox-group/checkbox-group";
 
 interface EditCellProps extends React.HTMLProps<HTMLElement> {
-  onChange: (value: boolean) => void;
+  onChange: (value: number) => void;
 }
 
 export default function EditCell({ className, onChange, }: EditCellProps) {
-  const [cellState, setCellState] = React.useState(null);
-  function onCellStateSelected(value: any) {
-    onChange(value);
-    setCellState(value);
+  const [cellState, setCellState] = React.useState<number | null>(null);
+  function onCellStateSelected(value: string[] | null[]) {
+    if (value.length === 0) {
+      value = [null];
+    } onChange(Number(value[0]));
+    setCellState(Number(value[0]));
   }
 
   return (
@@ -31,14 +33,10 @@ export default function EditCell({ className, onChange, }: EditCellProps) {
         </div>
       }
     >
-      <KSelect
-        root={{ onValueChange: onCellStateSelected, defaultValue: "null" }}
-        values={[
-          { label: "null", value: null },
-          { label: "false", value: false },
-          { label: "true", value: true },
-        ]}
-      />
+      <KCheckboxGroup items={[
+        { label: "false", value: "0" },
+        { label: "true", value: "1" },
+      ]} caption={"Cell value"} onChange={onCellStateSelected}></KCheckboxGroup>
     </KPopover>
   );
 }

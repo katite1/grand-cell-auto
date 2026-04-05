@@ -1,4 +1,9 @@
 @import "./theme.css";
+
 .root {
   isolation: isolate;
+}
+
+body {
+  background-color: rgb(163, 169, 167);
 }

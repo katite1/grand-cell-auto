@@ -5,20 +5,21 @@ import { SpatialRule, type Rule } from "~/data-structures/rule";
 import { RuleContext } from "~/contexts/rule-context";
 
 
-interface CellularGridProps {
-  rules: Rule[];
-}
-
 export default function CellularGrid() {
   const { rules } = useContext(RuleContext)
-  const grid = useRef(new Grid(100, 100))
+  const grid = useRef(new Grid(30, 30))
   const [gridRerender, setGridRerender] = useState(false)
+  const [play, setPlay] = useState(false);
+  const mouseDragging = useRef(false);
+
 
   const width = 1000;
   const height = 1000;
+  const cellHeight = Math.ceil(height / grid.current.content.length);
+  const cellWidth = Math.ceil(width / grid.current.content[0].length);
 
   function ruleApplies(
-    cell: boolean | null,
+    cell: number | null,
     x: number,
     y: number,
     rule: Rule,
@@ -84,11 +85,9 @@ export default function CellularGrid() {
     if (ctx === null) {
       return;
     }
-    const cellHeight = Math.ceil(height / grid.current.content.length);
-    const cellWidth = Math.ceil(width / grid.current.content[0].length);
     for (const [rowIndex, row] of Object.entries(grid.current.content)) {
       for (const [columnIndex, cell] of Object.entries(row)) {
-        ctx.fillStyle = cell === true ? "white" : "black";
+        ctx.fillStyle = cell === 1 ? "white" : "black";
         ctx.fillRect(
           Number(columnIndex) * cellWidth,
           Number(rowIndex) * cellHeight,
@@ -98,13 +97,17 @@ export default function CellularGrid() {
       }
     }
     ctx.stroke();
-
-    const stepInterval = setInterval(() => {  //assign interval to a variable to clear it.
-      doStep()
-    }, 10)
-
-    return () => clearInterval(stepInterval); //This is important
   }, [gridRerender]);
+
+  useEffect(() => {
+    if (play === true) {
+      const stepInterval = setInterval(() => {
+        doStep()
+      }, 10)
+
+      return () => clearInterval(stepInterval);
+    }
+  }, [play])
 
   function getMousePosition(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement>) {
     let rect = canvas.getBoundingClientRect();
@@ -112,27 +115,43 @@ export default function CellularGrid() {
     let y = (event.clientY - rect.top) / rect.height;
     return { x: x, y: y };
   }
-  function onClick(e: React.MouseEvent<HTMLCanvasElement>) {
+  function onMouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
+    if (mouseDragging.current === false) {
+      return;
+    }
     const { x, y } = getMousePosition(e.target as HTMLCanvasElement, e);
     grid.current.setCell(
       Math.round(x * grid.current.width),
       Math.round(y * grid.current.height),
-      true
+      1
     )
     grid.current.commit();
+    setGridRerender((v) => !v);
+  }
+
+  function togglePlay() {
+    setPlay((v) => !v);
+  }
+
+  function clearField() {
+    grid.current.content = grid.current.initializeContent();
+    grid.current.newContent = grid.current.initializeContent();
     setGridRerender((v) => !v);
   }
 
   return (
     <div className={styles.CellularGrid}>
       <button onClick={doStep}>doStep</button>
+      <button onClick={togglePlay}>Play {play === true ? "on" : "off"}</button>
+      <button onClick={clearField}>Clear</button>
       <canvas
         className={styles.Canvas}
         id="myCanvas"
         width={String(width)}
         height={String(height)}
-        style={{ border: "1px solid #d3d3d3" }}
-        onMouseMove={onClick}
+        onMouseMove={onMouseMove}
+        onMouseDown={() => mouseDragging.current = true}
+        onMouseUp={() => mouseDragging.current = false}
       >
       </canvas>
     </div>

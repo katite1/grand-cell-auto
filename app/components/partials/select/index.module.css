@@ -75,8 +75,8 @@
   min-width: var(--anchor-width);
   transform-origin: var(--transform-origin);
   transition:
-    transform 150ms,
-    opacity 150ms;
+    transform 50ms,
+    opacity 50ms;
 
   &[data-starting-style],
   &[data-ending-style] {
