@@ -9,8 +9,8 @@ interface EditRuleProps {
 }
 
 export default function EditRule({ ruleIndex }: EditRuleProps) {
-  const { setRules } = useContext(RuleContext)
-  function onChange(ruleIndex: number, type: "impulse" | "response", index: number, value: boolean) {
+  const { rules, setRules } = useContext(RuleContext)
+  function onChange(ruleIndex: number, type: "impulse" | "response", index: number, value: number) {
     setRules((rules) => {
       rules = [...rules];
       if (rules[ruleIndex] instanceof SpatialRule) {
@@ -19,17 +19,28 @@ export default function EditRule({ ruleIndex }: EditRuleProps) {
       return rules;
     })
   }
+
+  function onCellEdit(index: number, type: "impulse" | "response", ...args: [number]) {
+    onChange(ruleIndex, type, index, ...args)
+  }
+  const rule = rules[ruleIndex] as unknown as SpatialRule;
   return (
     <section className={styles.Rule}>
       <div className={styles.RuleImpulse}>
         {Array.from({ length: 9 }, (_, index) =>
-          <EditCell key={index} onChange={(...args) => onChange(ruleIndex, "impulse", index, ...args)} className={styles.Cell} />
+          <EditCell
+            cellValue={rule["impulse"][index]} key={index}
+            onChange={(...args) => onCellEdit(index, "impulse", ...args)} className={styles.Cell}
+          />
         )}
       </div>
       <span>&gt;</span>
       <div className={styles.RuleResponse}>
         {Array.from({ length: 9 }, (_, index) =>
-          <EditCell key={index} onChange={(...args) => onChange(ruleIndex, "response", index, ...args)} className={styles.Cell} />
+          <EditCell
+            cellValue={rule["response"][index]} key={index}
+            onChange={(...args) => onCellEdit(index, "response", ...args)} className={styles.Cell}
+          />
         )}
       </div>
     </section>

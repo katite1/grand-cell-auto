@@ -1,4 +1,15 @@
-export abstract class Rule { }
+
+export abstract class Rule {
+    serialized(): RuleSerialized {
+        throw "Serialize method not implemented for rule!";
+    }
+    static unserialize(): void {
+        throw "Serialize method not implemented for rule!";
+    }
+}
+export interface RuleSerialized {
+    type: string;
+}
 
 type spatialRuleCondition =
     [
@@ -12,6 +23,11 @@ type spatialRuleCondition =
         number | null,
         number | null,
     ]
+export interface SpatialRuleSerialized extends RuleSerialized {
+    type: "spatial";
+    impulse: spatialRuleCondition;
+    response: spatialRuleCondition;
+}
 
 export class SpatialRule extends Rule {
     impulse: spatialRuleCondition;
@@ -38,5 +54,15 @@ export class SpatialRule extends Rule {
     }
     responseCenter(): number {
         return this.response[4];
+    }
+    serialized(): SpatialRuleSerialized {
+        return {
+            type: "spatial",
+            impulse: this.impulse,
+            response: this.response
+        }
+    }
+    static unserialize(rule: SpatialRuleSerialized): SpatialRule {
+        return new SpatialRule(rule.impulse, rule.response)
     }
 }

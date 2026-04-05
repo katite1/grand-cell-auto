@@ -4,17 +4,18 @@ import styles from "./index.module.css";
 import { mergeProps } from "@base-ui/react";
 import KCheckboxGroup from "../checkbox-group/checkbox-group";
 
-interface EditCellProps extends React.HTMLProps<HTMLElement> {
+interface EditCellProps {
+  className: string;
   onChange: (value: number) => void;
+  cellValue: number | null;
 }
 
-export default function EditCell({ className, onChange, }: EditCellProps) {
-  const [cellState, setCellState] = React.useState<number | null>(null);
+export default function EditCell({ className, onChange, cellValue }: EditCellProps) {
   function onCellStateSelected(value: string[] | null[]) {
     if (value.length === 0) {
       value = [null];
-    } onChange(Number(value[0]));
-    setCellState(Number(value[0]));
+    }
+    onChange(Number(value[0]));
   }
 
   return (
@@ -24,12 +25,12 @@ export default function EditCell({ className, onChange, }: EditCellProps) {
         <div
           style={
             {
-              "--color": `var(--cell-state-${String(cellState)})`,
+              "--color": `var(--cell-state-${String(cellValue)})`,
             } as React.CSSProperties
           }
           {...mergeProps({ className: styles.Cell }, { className: className })}
         >
-          {cellState === null && <span>Ignored</span>}
+          {cellValue === null && <span>Ignored</span>}
         </div>
       }
     >
