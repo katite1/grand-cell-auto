@@ -1,19 +1,23 @@
-import { useContext, useEffect, useRef, useState, type ChangeEvent } from "react";
+import {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import styles from "./index.module.css";
 import Grid from "~/data-structures/grid";
 import { SpatialRule, type Rule } from "~/data-structures/rule";
 import { RuleContext } from "~/contexts/rule-context";
 
-
 export default function CellularGrid() {
-  const { rules } = useContext(RuleContext)
-  const grid = useRef(new Grid(30, 30))
-  const [gridRerender, setGridRerender] = useState(false)
+  const { rules } = useContext(RuleContext);
+  const grid = useRef(new Grid(30, 30));
+  const [gridRerender, setGridRerender] = useState(false);
   const [play, setPlay] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(50);
   const [brush, setBrush] = useState(1);
   const mouseDragging = useRef(false);
-
 
   const width = 1000;
   const height = 1000;
@@ -58,14 +62,17 @@ export default function CellularGrid() {
   useEffect(() => {
     if (play === true) {
       const stepInterval = setInterval(() => {
-        doStep()
-      }, playbackSpeed)
+        doStep();
+      }, playbackSpeed);
 
       return () => clearInterval(stepInterval);
     }
-  }, [play, playbackSpeed])
+  }, [play, playbackSpeed]);
 
-  function getMousePosition(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement>) {
+  function getMousePosition(
+    canvas: HTMLCanvasElement,
+    event: React.MouseEvent<HTMLCanvasElement>,
+  ) {
     let rect = canvas.getBoundingClientRect();
     let x = (event.clientX - rect.left) / rect.width;
     let y = (event.clientY - rect.top) / rect.height;
@@ -79,8 +86,8 @@ export default function CellularGrid() {
     grid.current.setCell(
       Math.round(x * grid.current.width),
       Math.round(y * grid.current.height),
-      brush
-    )
+      brush,
+    );
     grid.current.commit();
     setGridRerender((v) => !v);
   }
@@ -96,7 +103,7 @@ export default function CellularGrid() {
   }
 
   function handlePlaybackSpeedChanged(e: ChangeEvent<HTMLInputElement>) {
-    setPlaybackSpeed(Number(e.target.value))
+    setPlaybackSpeed(Number(e.target.value));
   }
   function handleProcessOrderChanged(e: ChangeEvent<HTMLSelectElement>) {
     grid.current.processOrder = e.target.value as "sequential" | "random";
@@ -105,7 +112,7 @@ export default function CellularGrid() {
     grid.current.processMode = e.target.value as "deferred" | "instant";
   }
   function handleBrushChanged(e: ChangeEvent<HTMLSelectElement>) {
-    setBrush(Number(e.target.value))
+    setBrush(Number(e.target.value));
   }
 
   return (
@@ -113,14 +120,23 @@ export default function CellularGrid() {
       <button onClick={doStep}>doStep</button>
       <button onClick={togglePlay}>Play {play === true ? "on" : "off"}</button>
       <button onClick={clearField}>Clear</button>
-      <input onChange={handlePlaybackSpeedChanged} type="range" min="10" max="200" value={playbackSpeed}
+      <input
+        onChange={handlePlaybackSpeedChanged}
+        type="range"
+        min="10"
+        max="200"
+        value={playbackSpeed}
       />
       <select name="processOrder" onChange={handleProcessOrderChanged}>
-        <option defaultChecked value="sequential">Sequential</option>
+        <option defaultChecked value="sequential">
+          Sequential
+        </option>
         <option value="random">Random</option>
       </select>
       <select name="processMode" onChange={handleProcessModeChanged}>
-        <option defaultChecked value="deferred">Deferred</option>
+        <option defaultChecked value="deferred">
+          Deferred
+        </option>
         <option value="instant">Instant</option>
       </select>
       <select defaultValue="1" name="brush" onChange={handleBrushChanged}>
@@ -133,10 +149,9 @@ export default function CellularGrid() {
         width={String(width)}
         height={String(height)}
         onMouseMove={onMouseMove}
-        onMouseDown={() => mouseDragging.current = true}
-        onMouseUp={() => mouseDragging.current = false}
-      >
-      </canvas>
+        onMouseDown={() => (mouseDragging.current = true)}
+        onMouseUp={() => (mouseDragging.current = false)}
+      ></canvas>
     </div>
   );
 }

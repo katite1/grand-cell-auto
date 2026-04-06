@@ -1,13 +1,17 @@
-import ListRules from "~/components/rules/list-rules/list-rule";
 import type { Route } from "./+types/make";
 import styles from "./index.module.css";
 import CellularGrid from "~/components/cellular-grid/cellular-grid";
-import { Rule, SpatialRule, type RuleSerialized, type SpatialRuleSerialized } from "~/data-structures/rule";
+import {
+  Rule,
+  SpatialRule,
+  type RuleSerialized,
+  type SpatialRuleSerialized,
+} from "~/data-structures/rule";
 import { useContext, createContext, useState, type ChangeEvent } from "react";
 import { RuleContext } from "~/contexts/rule-context";
 import EditRule from "~/components/rules/edit-rule/edit-rule";
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [{ title: "Make ruleset" }];
 }
 
@@ -64,16 +68,18 @@ export default function Make() {
 
   function newRule(): void {
     setRules((rules) => {
-      return [...rules, new SpatialRule()]
-    })
+      return [...rules, new SpatialRule()];
+    });
   }
 
   function saveRules(): void {
     const a = document.createElement("a");
-    const serializedRules = rules.map((rule) => rule.serialized())
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(serializedRules, null, 2)], {
-      type: "application/json"
-    }));
+    const serializedRules = rules.map((rule) => rule.serialized());
+    a.href = URL.createObjectURL(
+      new Blob([JSON.stringify(serializedRules, null, 2)], {
+        type: "application/json",
+      }),
+    );
     a.setAttribute("download", "rules.json");
     document.body.appendChild(a);
     a.click();
@@ -92,7 +98,7 @@ export default function Make() {
               return SpatialRule.unserialize(rule as SpatialRuleSerialized);
             }
             throw "Rule type is invalid!!";
-          })
+          });
           setRules(newRules);
         } catch (error) {
           e.target.value = "";
@@ -108,7 +114,7 @@ export default function Make() {
       <section className={styles.Make}>
         <div className={styles.Rules}>
           {rules.map((_, index) => {
-            return <EditRule ruleIndex={index} key={index} />
+            return <EditRule ruleIndex={index} key={index} />;
           })}
           <button onClick={newRule}>Add rule</button>
           <button onClick={saveRules}>Save rules to JSON</button>

@@ -4,10 +4,10 @@ export default class Grid {
   content: number[][] | null[][];
   newContent: number[][] | null[][];
   outOfBoundsValue: number;
-  processOrder: "sequential" | "random"
+  processOrder: "sequential" | "random";
   // Deferred - as we loop the grid we create a new grid with the changes. Each cell is reading the previous grid's state
   // Instant - as we loop the grid we apply each cell's response instantly - cells next in the iteration will be affected by the responses from previous cells
-  processMode: "deferred" | "instant"
+  processMode: "deferred" | "instant";
 
   constructor(width: number, height: number) {
     this.width = width;
@@ -41,7 +41,8 @@ export default class Grid {
     if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
       return;
     }
-    const content = this.processMode === "deferred" ? this.newContent : this.content;
+    const content =
+      this.processMode === "deferred" ? this.newContent : this.content;
     if (content[y][x] !== undefined) {
       content[y][x] = value;
     }
@@ -51,7 +52,7 @@ export default class Grid {
     if (this.processMode === "instant") {
       return;
     }
-    this.content = this.cloneContent(this.newContent)
+    this.content = this.cloneContent(this.newContent);
   }
 
   shuffle2D() {
@@ -70,7 +71,10 @@ export default class Grid {
       // you'll find more details about that syntax in later chapters
       // same can be written as:
       // let t = array[i]; array[i] = array[j]; array[j] = t
-      [shuffledCells[i], shuffledCells[j]] = [shuffledCells[j], shuffledCells[i]];
+      [shuffledCells[i], shuffledCells[j]] = [
+        shuffledCells[j],
+        shuffledCells[i],
+      ];
     }
 
     return shuffledCells;
@@ -80,7 +84,7 @@ export default class Grid {
     fn: (arg1: number | null, arg2: number, arg3: number) => void,
   ): void {
     if (this.processOrder === "random") {
-      const items = this.shuffle2D()
+      const items = this.shuffle2D();
       for (const item of items) {
         fn(item[0], item[1], item[2]);
       }
@@ -94,11 +98,11 @@ export default class Grid {
   }
 
   cloneContent(contentToClone: number[][] | null[][]) {
-    let cloned: number[][] | null[][] = []
+    let cloned: number[][] | null[][] = [];
     for (const [rowIndex, row] of Object.entries(contentToClone)) {
-      cloned[Number(rowIndex)] = [] as number[] | null[]
+      cloned[Number(rowIndex)] = [] as number[] | null[];
       for (const [columnIndex, cell] of Object.entries<number | null>(row)) {
-        cloned[Number(rowIndex)][Number(columnIndex)] = cell
+        cloned[Number(rowIndex)][Number(columnIndex)] = cell;
       }
     }
     return cloned;
