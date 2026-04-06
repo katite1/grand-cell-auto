@@ -1,8 +1,8 @@
 export default class Grid {
   width: number;
   height: number;
-  content: number[][] | null[][];
-  newContent: number[][] | null[][];
+  content: CellState[][];
+  newContent: CellState[][];
   outOfBoundsValue: number;
   processOrder: "sequential" | "random";
   // Deferred - as we loop the grid we create a new grid with the changes. Each cell is reading the previous grid's state
@@ -95,8 +95,8 @@ export default class Grid {
     }
   }
 
-  cloneContent(contentToClone: number[][] | null[][]) {
-    let cloned: number[][] | null[][] = [];
+  cloneContent(contentToClone: CellState[][]) {
+    let cloned: CellState[][] = [];
     for (const [rowIndex, row] of Object.entries(contentToClone)) {
       cloned[Number(rowIndex)] = [] as number[] | null[];
       for (const [columnIndex, cell] of Object.entries<CellState>(row)) {

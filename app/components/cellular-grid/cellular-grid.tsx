@@ -7,8 +7,21 @@ import {
 } from "react";
 import styles from "./index.module.css";
 import Grid from "~/data-structures/grid";
-import { SpatialRule, type Rule } from "~/data-structures/rule";
 import { RuleContext } from "~/contexts/rule-context";
+
+export interface Cell {
+  name: string;
+  color: string;
+  state: CellState;
+}
+
+export const CellularGridCells: Cell[] = [
+  { name: "black", color: "#000", state: 0 },
+  { name: "white", color: "#fff", state: 1 },
+  { name: "red", color: "#f00", state: 2 },
+  { name: "green", color: "#0f0", state: 3 },
+  { name: "blue", color: "#00f", state: 4 },
+];
 
 export default function CellularGrid() {
   const { rules } = useContext(RuleContext);
@@ -39,6 +52,15 @@ export default function CellularGrid() {
       setGridRerender((v) => !v);
     }
   }
+
+  function getCellDefinition(state: CellState): Cell {
+    const cell = CellularGridCells.find((item: Cell) => item.state === state);
+    if (cell === undefined) {
+      throw "Attempt to find non-existent cell";
+    }
+    return cell;
+  }
+
   useEffect(() => {
     var c = document.getElementById("myCanvas") as HTMLCanvasElement;
     var ctx = c.getContext("2d");
@@ -46,8 +68,9 @@ export default function CellularGrid() {
       return;
     }
     for (const [rowIndex, row] of Object.entries(grid.current.content)) {
-      for (const [columnIndex, cell] of Object.entries(row)) {
-        ctx.fillStyle = cell === 1 ? "white" : "black";
+      for (const [columnIndex, cellState] of Object.entries(row)) {
+        const cell = getCellDefinition(cellState);
+        ctx.fillStyle = cell.color;
         ctx.fillRect(
           Number(columnIndex) * cellWidth,
           Number(rowIndex) * cellHeight,
@@ -140,8 +163,9 @@ export default function CellularGrid() {
         <option value="instant">Instant</option>
       </select>
       <select defaultValue="1" name="brush" onChange={handleBrushChanged}>
-        <option value="0">0</option>
-        <option value="1">1</option>
+        {CellularGridCells.map((cell: Cell) => {
+          return <option value={String(cell.state)}>{cell.name}</option>;
+        })}
       </select>
       <canvas
         className={styles.Canvas}

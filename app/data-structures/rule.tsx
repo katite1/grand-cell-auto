@@ -10,7 +10,7 @@ export abstract class Rule {
   applies(grid: Grid, cell: CellState, x: number, y: number): boolean {
     throw "Applies method not implemented for rule!";
   }
-  apply(grid: Grid, cell: CellState, x: number, y: number): void {
+  apply(grid: Grid, x: number, y: number): void {
     throw "Apply method not implemented for rule!";
   }
 }

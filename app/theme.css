@@ -2,6 +2,9 @@
   --cell-state-null: rgb(96, 120, 123);
   --cell-state-0: rgb(0 0 0);
   --cell-state-1: rgb(255 255 255);
+  --cell-state-2: rgb(255 0 0);
+  --cell-state-3: rgb(0 255 0);
+  --cell-state-4: rgb(0 0 255);
 
   --color-blue: oklch(45% 50% 264deg);
   --color-red: oklch(50% 55% 31deg);

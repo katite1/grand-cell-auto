@@ -3,6 +3,10 @@ import KPopover from "app/components/partials/popover/popover";
 import styles from "./index.module.css";
 import { mergeProps } from "@base-ui/react";
 import KCheckboxGroup from "../checkbox-group/checkbox-group";
+import {
+  CellularGridCells,
+  type Cell,
+} from "~/components/cellular-grid/cellular-grid";
 
 interface EditCellProps {
   className: string;
@@ -41,10 +45,9 @@ export default function EditCell({
       }
     >
       <KCheckboxGroup
-        items={[
-          { label: "black", value: "0" },
-          { label: "white", value: "1" },
-        ]}
+        items={CellularGridCells.map((item: Cell) => {
+          return { label: item.name, value: String(item.state) };
+        })}
         caption={"Cell value"}
         onChange={onCellStateSelected}
       ></KCheckboxGroup>
