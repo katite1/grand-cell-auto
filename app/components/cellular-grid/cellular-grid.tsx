@@ -26,30 +26,7 @@ export default function CellularGrid() {
     y: number,
     rule: Rule,
   ): boolean {
-    if (rule instanceof SpatialRule) {
-      if (cell !== rule.impulseCenter()) {
-        return false;
-      }
-      let conditionIndex = 0;
-      for (const condition of rule.impulse) {
-        if (condition == null) {
-          conditionIndex++;
-          continue;
-        }
-        const cell = grid.current.getCell(
-          x + rule.vectors[conditionIndex][0],
-          y + rule.vectors[conditionIndex][1],
-        )
-        if (
-          cell !== condition
-        ) {
-          return false;
-        }
-        conditionIndex++;
-      }
-      return true;
-    }
-    return true;
+    return rule.applies(grid.current, cell, x, y);
   }
 
   function doStep(): void {

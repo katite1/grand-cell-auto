@@ -1,3 +1,4 @@
+import type Grid from "./grid";
 
 export abstract class Rule {
     serialized(): RuleSerialized {
@@ -5,6 +6,9 @@ export abstract class Rule {
     }
     static unserialize(rule: RuleSerialized): Rule {
         throw "Serialize method not implemented for rule!";
+    }
+    applies(grid: Grid, cell: number | null, x: number, y: number): boolean {
+        throw "Applies method not implemented for rule!";
     }
 }
 export interface RuleSerialized {
@@ -64,5 +68,28 @@ export class SpatialRule extends Rule {
     }
     static unserialize(rule: SpatialRuleSerialized): SpatialRule {
         return new SpatialRule(rule.impulse, rule.response)
+    }
+    applies(grid: Grid, cell: number | null, x: number, y: number): boolean {
+        if (cell !== this.impulseCenter()) {
+            return false;
+        }
+        let conditionIndex = 0;
+        for (const condition of this.impulse) {
+            if (condition == null) {
+                conditionIndex++;
+                continue;
+            }
+            const cell = grid.getCell(
+                x + this.vectors[conditionIndex][0],
+                y + this.vectors[conditionIndex][1],
+            )
+            if (
+                cell !== condition
+            ) {
+                return false;
+            }
+            conditionIndex++;
+        }
+        return true;
     }
 }
