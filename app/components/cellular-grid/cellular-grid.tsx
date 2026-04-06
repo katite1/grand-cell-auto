@@ -20,36 +20,13 @@ export default function CellularGrid() {
   const cellHeight = Math.ceil(height / grid.current.content.length);
   const cellWidth = Math.ceil(width / grid.current.content[0].length);
 
-  function ruleApplies(
-    cell: number | null,
-    x: number,
-    y: number,
-    rule: Rule,
-  ): boolean {
-    return rule.applies(grid.current, cell, x, y);
-  }
-
   function doStep(): void {
     let gridChanged: boolean = false;
     grid.current.forEachCell((cell, x, y) => {
       for (const rule of rules) {
-        if (ruleApplies(cell, x, y, rule)) {
-          if (rule instanceof SpatialRule) {
-            let conditionIndex = 0;
-            for (const condition of rule.response) {
-              if (condition == null) {
-                conditionIndex++;
-                continue;
-              }
-              grid.current.setCell(
-                x + rule.vectors[conditionIndex][0],
-                y + rule.vectors[conditionIndex][1],
-                condition
-              )
-              gridChanged = true;
-              conditionIndex++;
-            }
-          }
+        if (rule.applies(grid.current, cell, x, y)) {
+          rule.apply(grid.current, cell, x, y);
+          gridChanged = true;
         }
       }
     });

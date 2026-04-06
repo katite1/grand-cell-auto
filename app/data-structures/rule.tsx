@@ -10,6 +10,9 @@ export abstract class Rule {
     applies(grid: Grid, cell: number | null, x: number, y: number): boolean {
         throw "Applies method not implemented for rule!";
     }
+    apply(grid: Grid, cell: number | null, x: number, y: number): void {
+        throw "Apply method not implemented for rule!";
+    }
 }
 export interface RuleSerialized {
     type: string;
@@ -91,5 +94,21 @@ export class SpatialRule extends Rule {
             conditionIndex++;
         }
         return true;
+    }
+    apply(grid: Grid, cell: number | null, x: number, y: number): void {
+        let conditionIndex = 0;
+        for (const condition of this.response) {
+            if (condition == null) {
+                conditionIndex++;
+                continue;
+            }
+            grid.setCell(
+                x + this.vectors[conditionIndex][0],
+                y + this.vectors[conditionIndex][1],
+                condition
+            )
+            conditionIndex++;
+        }
+
     }
 }
