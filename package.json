@@ -23,6 +23,7 @@
     "@types/node": "^22",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "eslint": "^10.2.0",
     "prettier": "3.8.1",
     "sass-embedded": "^1.98.0",
     "tailwindcss": "^4.1.13",
