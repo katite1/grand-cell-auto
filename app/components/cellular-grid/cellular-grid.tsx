@@ -27,6 +27,8 @@ export default function CellularGrid() {
   const { rules } = useContext(RuleContext);
   const grid = useRef(new Grid(30, 30));
   const [gridRerender, setGridRerender] = useState(false);
+  const doStepRef = useRef(doStep);
+  doStepRef.current = doStep;
   const [play, setPlay] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(50);
   const [brush, setBrush] = useState(1);
@@ -85,7 +87,7 @@ export default function CellularGrid() {
   useEffect(() => {
     if (play === true) {
       const stepInterval = setInterval(() => {
-        doStep();
+        doStepRef.current();
       }, playbackSpeed);
 
       return () => clearInterval(stepInterval);
@@ -163,8 +165,12 @@ export default function CellularGrid() {
         <option value="instant">Instant</option>
       </select>
       <select defaultValue="1" name="brush" onChange={handleBrushChanged}>
-        {CellularGridCells.map((cell: Cell) => {
-          return <option value={String(cell.state)}>{cell.name}</option>;
+        {CellularGridCells.map((cell: Cell, index: number) => {
+          return (
+            <option key={index} value={String(cell.state)}>
+              {cell.name}
+            </option>
+          );
         })}
       </select>
       <canvas

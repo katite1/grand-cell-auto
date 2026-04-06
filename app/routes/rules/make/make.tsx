@@ -15,54 +15,6 @@ export function meta({}: Route.MetaArgs) {
   return [{ title: "Make ruleset" }];
 }
 
-// Falling sand game
-// const rules: Rule[] = [
-//   new SpatialRule(
-//     [null, null, null, null, true, null, null, false, null],
-//     [null, null, null, null, false, null, null, true, null],
-//   ),
-//   new SpatialRule(
-//     [null, null, null, null, true, null, false, true, null],
-//     [null, null, null, null, false, null, true, null, null],
-//   ),
-//   new SpatialRule(
-//     [null, null, null, null, true, null, null, true, false],
-//     [null, null, null, null, false, null, null, null, true],
-//   ),
-// ]
-
-// Free epilepsy
-// const rules: Rule[] = [
-//   new SpatialRule(
-//     [null, false, null, false, false, false, null, false, null],
-//     [null, null, null, null, true, null, null, null, null],
-//   ),
-//   new SpatialRule(
-//     [null, true, null, true, true, true, null, true, null],
-//     [null, null, null, null, false, null, null, null, null],
-//   ),
-// ]
-
-// Pyramid (draw in top left a bit)
-// const rules: Rule[] = [
-//   new SpatialRule(
-//     [null, null, null, null, false, true, null, true, null],
-//     [null, null, null, null, true, null, false, false, false],
-//   ),
-// ]
-
-// Pyramid (top-left too) (draw in top left a bit)
-// const rules: Rule[] = [
-//   new SpatialRule(
-//     [null, null, null, null, false, true, null, true, null],
-//     [null, null, null, null, true, null, false, false, false],
-//   ),
-//   new SpatialRule(
-//     [null, true, null, true, false, null, null, null, null],
-//     [false, false, null, null, true, null, null, null, null],
-//   ),
-// ]
-
 export default function Make() {
   const [rules, setRules] = useState<Rule[]>([]);
 
@@ -101,6 +53,7 @@ export default function Make() {
           });
           setRules(newRules);
         } catch (error) {
+          console.log(error);
           e.target.value = "";
           return;
         }
