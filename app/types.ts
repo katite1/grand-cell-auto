@@ -1,0 +1,1 @@
+type CellState = number | null;

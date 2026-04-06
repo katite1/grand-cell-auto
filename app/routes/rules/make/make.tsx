@@ -9,7 +9,7 @@ import {
 } from "~/data-structures/rule";
 import { useContext, createContext, useState, type ChangeEvent } from "react";
 import { RuleContext } from "~/contexts/rule-context";
-import EditRule from "~/components/rules/edit-rule/edit-rule";
+import RuleEditor from "~/components/rules/edit-rule/edit-rule";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Make ruleset" }];
@@ -114,7 +114,7 @@ export default function Make() {
       <section className={styles.Make}>
         <div className={styles.Rules}>
           {rules.map((_, index) => {
-            return <EditRule ruleIndex={index} key={index} />;
+            return <RuleEditor ruleIndex={index} key={index} />;
           })}
           <button onClick={newRule}>Add rule</button>
           <button onClick={saveRules}>Save rules to JSON</button>

@@ -29,7 +29,7 @@ export default function CellularGrid() {
     grid.current.forEachCell((cell, x, y) => {
       for (const rule of rules) {
         if (rule.applies(grid.current, cell, x, y)) {
-          rule.apply(grid.current, cell, x, y);
+          rule.apply(grid.current, x, y);
           gridChanged = true;
         }
       }

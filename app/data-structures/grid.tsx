@@ -30,14 +30,14 @@ export default class Grid {
     return content;
   }
 
-  getCell(x: number, y: number): number | null {
+  getCell(x: number, y: number): CellState {
     if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
       return this.outOfBoundsValue;
     }
     return this.content[y][x] ?? this.outOfBoundsValue;
   }
 
-  setCell(x: number, y: number, value: number | null) {
+  setCell(x: number, y: number, value: CellState) {
     if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
       return;
     }
@@ -56,8 +56,8 @@ export default class Grid {
   }
 
   shuffle2D() {
-    let shuffledCells = [] as [number | null, number, number][];
-    for (const [y, row] of Object.entries<Array<number | null>>(this.content)) {
+    let shuffledCells = [] as [CellState, number, number][];
+    for (const [y, row] of Object.entries<Array<CellState>>(this.content)) {
       for (const [x, cell] of Object.entries(row)) {
         shuffledCells.push([cell, Number(x), Number(y)]);
       }
@@ -80,9 +80,7 @@ export default class Grid {
     return shuffledCells;
   }
 
-  forEachCell(
-    fn: (arg1: number | null, arg2: number, arg3: number) => void,
-  ): void {
+  forEachCell(fn: (arg1: CellState, arg2: number, arg3: number) => void): void {
     if (this.processOrder === "random") {
       const items = this.shuffle2D();
       for (const item of items) {
@@ -90,7 +88,7 @@ export default class Grid {
       }
       return;
     }
-    for (const [y, row] of Object.entries<Array<number | null>>(this.content)) {
+    for (const [y, row] of Object.entries<Array<CellState>>(this.content)) {
       for (const [x, cell] of Object.entries(row)) {
         fn(cell, Number(x), Number(y));
       }
@@ -101,7 +99,7 @@ export default class Grid {
     let cloned: number[][] | null[][] = [];
     for (const [rowIndex, row] of Object.entries(contentToClone)) {
       cloned[Number(rowIndex)] = [] as number[] | null[];
-      for (const [columnIndex, cell] of Object.entries<number | null>(row)) {
+      for (const [columnIndex, cell] of Object.entries<CellState>(row)) {
         cloned[Number(rowIndex)][Number(columnIndex)] = cell;
       }
     }

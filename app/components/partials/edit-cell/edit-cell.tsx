@@ -6,8 +6,8 @@ import KCheckboxGroup from "../checkbox-group/checkbox-group";
 
 interface EditCellProps {
   className: string;
-  onChange: (value: number | null) => void;
-  cellValue: number | null;
+  onChange: (value: CellState) => void;
+  cellValue: CellState;
 }
 
 export default function EditCell({

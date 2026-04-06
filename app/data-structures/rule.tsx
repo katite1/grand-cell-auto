@@ -7,10 +7,10 @@ export abstract class Rule {
   static unserialize(rule: RuleSerialized): Rule {
     throw "Serialize method not implemented for rule!";
   }
-  applies(grid: Grid, cell: number | null, x: number, y: number): boolean {
+  applies(grid: Grid, cell: CellState, x: number, y: number): boolean {
     throw "Applies method not implemented for rule!";
   }
-  apply(grid: Grid, cell: number | null, x: number, y: number): void {
+  apply(grid: Grid, cell: CellState, x: number, y: number): void {
     throw "Apply method not implemented for rule!";
   }
 }
@@ -19,15 +19,15 @@ export interface RuleSerialized {
 }
 
 type spatialRuleCondition = [
-  number | null,
-  number | null,
-  number | null,
-  number | null,
+  CellState,
+  CellState,
+  CellState,
+  CellState,
   number,
-  number | null,
-  number | null,
-  number | null,
-  number | null,
+  CellState,
+  CellState,
+  CellState,
+  CellState,
 ];
 export interface SpatialRuleSerialized extends RuleSerialized {
   type: "spatial";
@@ -75,7 +75,7 @@ export class SpatialRule extends Rule {
   static unserialize(rule: SpatialRuleSerialized): SpatialRule {
     return new SpatialRule(rule.impulse, rule.response);
   }
-  applies(grid: Grid, cell: number | null, x: number, y: number): boolean {
+  applies(grid: Grid, cell: CellState, x: number, y: number): boolean {
     if (cell !== this.impulseCenter()) {
       return false;
     }
@@ -96,7 +96,7 @@ export class SpatialRule extends Rule {
     }
     return true;
   }
-  apply(grid: Grid, cell: number | null, x: number, y: number): void {
+  apply(grid: Grid, x: number, y: number): void {
     let conditionIndex = 0;
     for (const condition of this.response) {
       if (condition == null) {
@@ -112,3 +112,69 @@ export class SpatialRule extends Rule {
     }
   }
 }
+
+// export class NeighbourRule extends Rule {
+//   cellState: number | boolean;
+//   comparison: ">" | "==" | "<";
+//   count: number;
+//   neighbourType: number | boolean;
+//   response: number | boolean;
+//   neighbourVectors: [number, number][] = [];
+//   constructor() {
+//     super();
+//     this.neighbourVectors = [
+//       [-1, -1],
+//       [0, -1],
+//       [1, -1],
+//       [-1, 0],
+//       [1, 0],
+//       [-1, 1],
+//       [0, 1],
+//       [1, 1],
+//     ];
+//   }
+//   serialized(): SpatialRuleSerialized {
+//     return {
+//       type: "spatial",
+//     };
+//   }
+//   static unserialize(rule: SpatialRuleSerialized): SpatialRule {
+//     return new SpatialRule(rule.impulse, rule.response);
+//   }
+//   applies(grid: Grid, cell: CellState, x: number, y: number): boolean {
+//     if (cell !== this.impulseCenter()) {
+//       return false;
+//     }
+//     let conditionIndex = 0;
+//     for (const condition of this.impulse) {
+//       if (condition == null) {
+//         conditionIndex++;
+//         continue;
+//       }
+//       const cell = grid.getCell(
+//         x + this.vectors[conditionIndex][0],
+//         y + this.vectors[conditionIndex][1],
+//       );
+//       if (cell !== condition) {
+//         return false;
+//       }
+//       conditionIndex++;
+//     }
+//     return true;
+//   }
+//   apply(grid: Grid, cell: CellState, x: number, y: number): void {
+//     let conditionIndex = 0;
+//     for (const condition of this.response) {
+//       if (condition == null) {
+//         conditionIndex++;
+//         continue;
+//       }
+//       grid.setCell(
+//         x + this.vectors[conditionIndex][0],
+//         y + this.vectors[conditionIndex][1],
+//         condition,
+//       );
+//       conditionIndex++;
+//     }
+//   }
+// }
