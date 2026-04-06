@@ -11,6 +11,7 @@ export default function CellularGrid() {
   const [gridRerender, setGridRerender] = useState(false)
   const [play, setPlay] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(50);
+  const [brush, setBrush] = useState(1);
   const mouseDragging = useRef(false);
 
 
@@ -124,7 +125,7 @@ export default function CellularGrid() {
     grid.current.setCell(
       Math.round(x * grid.current.width),
       Math.round(y * grid.current.height),
-      1
+      brush
     )
     grid.current.commit();
     setGridRerender((v) => !v);
@@ -140,11 +141,17 @@ export default function CellularGrid() {
     setGridRerender((v) => !v);
   }
 
-  function setProcessOrder(e: ChangeEvent<HTMLSelectElement>) {
+  function handlePlaybackSpeedChanged(e: ChangeEvent<HTMLInputElement>) {
+    setPlaybackSpeed(Number(e.target.value))
+  }
+  function handleProcessOrderChanged(e: ChangeEvent<HTMLSelectElement>) {
     grid.current.processOrder = e.target.value as "sequential" | "random";
   }
-  function setProcessMode(e: ChangeEvent<HTMLSelectElement>) {
+  function handleProcessModeChanged(e: ChangeEvent<HTMLSelectElement>) {
     grid.current.processMode = e.target.value as "deferred" | "instant";
+  }
+  function handleBrushChanged(e: ChangeEvent<HTMLSelectElement>) {
+    setBrush(Number(e.target.value))
   }
 
   return (
@@ -152,17 +159,19 @@ export default function CellularGrid() {
       <button onClick={doStep}>doStep</button>
       <button onClick={togglePlay}>Play {play === true ? "on" : "off"}</button>
       <button onClick={clearField}>Clear</button>
-      <input
-        onChange={(e: ChangeEvent<HTMLInputElement>) => setPlaybackSpeed(Number(e.target.value))}
-        type="range" min="10" max="200" value={playbackSpeed}
+      <input onChange={handlePlaybackSpeedChanged} type="range" min="10" max="200" value={playbackSpeed}
       />
-      <select name="processOrder" onChange={setProcessOrder}>
+      <select name="processOrder" onChange={handleProcessOrderChanged}>
         <option defaultChecked value="sequential">Sequential</option>
         <option value="random">Random</option>
       </select>
-      <select name="processMode" onChange={setProcessMode}>
+      <select name="processMode" onChange={handleProcessModeChanged}>
         <option defaultChecked value="deferred">Deferred</option>
         <option value="instant">Instant</option>
+      </select>
+      <select defaultValue="1" name="brush" onChange={handleBrushChanged}>
+        <option value="0">0</option>
+        <option value="1">1</option>
       </select>
       <canvas
         className={styles.Canvas}
